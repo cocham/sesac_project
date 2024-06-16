@@ -1,0 +1,12 @@
+crm_data_generate/generators/__pycache__/Addressgenerate.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Birthgenerate.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Gendergenerate.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Itemgenerate.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Namegenerate.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Itemgenerator.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Ordergenerator.cpython-39.pyc
+crm_data_generate/generators/__pycache__/OrderItemgenerator.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Storegenerator.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Storegenerate.cpython-39.pyc
+crm_data_generate/generators/__pycache__/Usergenerator.cpython-39.pyc
+crm_data_generate/printer/__pycache__/Printer.cpython-39.pyc

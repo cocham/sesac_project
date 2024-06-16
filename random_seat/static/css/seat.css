@@ -1,0 +1,54 @@
+.table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+}
+.table-row {
+    display: table-row;
+}
+
+.table-cell {
+    position: relative;
+    width: 100px; /* 셀 너비 조정 */
+    height: 100px; /* 셀 높이 조정 */
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer; /* 포인터 커서 */
+    perspective: 1000px; /* 3D 회전 효과를 위한 perspective 설정 */
+    transition: transform 0.3s ease;
+}
+
+.table-cell .card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative; /* 절대 위치에서 상대 위치로 변경 */
+    transform-style: preserve-3d; /* 자식 요소의 3D 변환 유지 */
+    transition: transform 0.3s ease;
+}
+
+.table-cell .front, .table-cell .back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden; /* 뒷면 감춤 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    color: #333;
+}
+
+.table-cell .front {
+    transform: rotateY(0deg); /* 초기 상태: 정면 */
+}
+
+.table-cell .back {
+    transform: rotateY(180deg); /* 회전하여 뒷면 */
+    background-color: #f0f0f0;
+}
+
+.table-cell.active .card-inner {
+    transform: rotateY(180deg); /* 클릭 시 회전하여 뒷면을 보이게 함 */
+}
