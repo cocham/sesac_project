@@ -1,0 +1,73 @@
+.screen {
+    border: 5px solid;
+    float: left;
+    height: 200px;
+    margin-top: 40px;
+    margin-left: 200px;
+    align-content: center;
+    padding-inline: 10px;
+}
+
+.table {
+    display: table;
+    width: 100%; /* 전체 테이블 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬을 위한 마진 설정 */
+    margin-left: 350px;
+    border-collapse: collapse;
+    }
+
+.table-row {
+    display: table-row;
+}
+.card-inner {
+    display: table-cell;
+    width: 150px; /* 일정한 너비 설정 */
+    height: 150px; /* 일정한 높이 설정 */
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    perspective: 1000px; /* 3D 회전 효과를 위한 perspective 설정 */
+    transition: transform 0.5s ease;
+    position: relative;
+    
+}
+
+@keyframes rotateCard {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.front {
+    animation-name: rotateCard;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+} 
+.card-inner.active .front {
+    transform: rotateY(180deg); /* 앞면 회전하여 숨기기 */
+}
+.card-inner.active .back {
+    transform: rotateY(0deg); /* 뒷면 보이도록 회전 */
+}
+.front, .back {
+    position: absolute; /* 절대 위치 설정 */
+    width: 100%; /* 너비 100% 설정 */
+    height: 100%; /* 높이 100% 설정 */
+    backface-visibility: hidden; /* 뒷면 감추기 */
+    transition: transform 0.5s ease; /* 변형 애니메이션 추가 */
+}
+.back {
+    transform: rotateY(180deg); /* 초기에는 뒷면 숨김 */
+}
+.menu{
+    margin-top: 150px;
+    display: flex;
+}
+.menu button{
+    margin-left: 20px;
+}
