@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/seat3.css">
+</head>
+<body>
+    <div class="screen">
+        스크린
+    </div>
+    <div class="box-container"  width:800px;">
+        <div class="box"> <!-- 한 행 -->
+            <div class="card-inner" onclick="flipCard(this)">
+                <div class="front">{{index[0]}}</div>
+                <div class="back">{{random_user[0]}}</div>
+            </div>
+            <div class="card-inner" onclick="flipCard(this)">
+                <div class="front">{{index[1]}}</div>
+                <div class="back">{{random_user[1]}}</div>
+            </div>
+            <div class="card-inner" onclick="flipCard(this)">
+                <div class="front">{{index[2]}}</div>
+                <div class="back">{{random_user[2]}}</div>
+            </div>
+            <div class="card-inner" onclick="flipCard(this)">
+                <div class="front">{{index[3]}}</div>
+                <div class="back">{{random_user[3]}}</div>
+            </div>
+            <div class="card-inner" onclick="flipCard(this)">
+                <div class="front">{{index[4]}}</div>
+                <div class="back">{{random_user[4]}}</div>
+            </div>
+        </div>
+        <div class="box-container">
+            <div class="box">
+                <div class="card-inner" onclick="flipCard(this)">
+                    <div class="front">{{index[5]}}</div>
+                    <div class="back">{{random_user[5]}}</div>
+                </div>
+                <div class="card-inner" onclick="flipCard(this)">
+                    <div class="front">{{index[6]}}</div>
+                    <div class="back">{{random_user[6]}}</div>
+                </div>
+                <div class="card-inner" onclick="flipCard(this)">
+                    <div class="front">{{index[7]}}</div>
+                    <div class="back">{{random_user[7]}}</div>
+                </div>
+                <div class="card-inner" onclick="flipCard(this)">
+                    <div class="front">{{index[8]}}</div>
+                    <div class="back">{{random_user[8]}}</div>
+                </div>
+                <div class="card-inner" onclick="flipCard(this)">
+                    <div class="front">{{index[9]}}</div>
+                    <div class="back">{{random_user[9]}}</div>
+                </div>
+        </div>
+    </div>
+    <div class="menu">
+        <form action="/" method="GET">
+            <input name="random" type="submit" value="랜덤 룰렛">
+        </form>
+        <button onclick="flipAllCards()">한번에 확인</button>
+        <button onclick="flipOrderCards()">차례대로 확인</button>
+    </div>
+</body>
+<script>
+    function flipCard(card) {
+        card.classList.toggle('active');
+    }
+    
+    function flipAllCards() {
+        let cards = document.querySelectorAll('.card-inner');
+        cards.forEach(card => {
+        if (!card.classList.contains('active')) {
+            card.classList.add('active');
+        }
+        });
+    }
+
+    function flipOrderCards() {
+        let cards = document.querySelectorAll('.card-inner');
+        function activateCard(index) {     
+        cards.forEach(card => {
+            let front = card.querySelector('.front');
+            if (front.textContent === String(index)) {
+                if (!card.classList.contains('active')) {
+                    setTimeout(() => {
+                        card.classList.add('active');
+                    }, index * 800);
+                }
+            }
+        });
+    }
+    
+    for (let i = 1; i <= 10; i++) {
+        activateCard(i);
+    }
+}
+</script>
+</html>
