@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜덤 자리 배치</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="screen">
+        스크린
+    </div>
+
+    <div id="board" class="board">
+    </div>
+
+    <div class="menu">
+        <button id="startButton">자리 배치 시작</button>
+        <button id="flipAllButton">한 번에 보기</button>
+    </div>
+    <script>
+        const startButton = document.getElementById("startButton");
+        const users = ['user1','user2','user3','user4','user5','user6','user7','user8','user9','user10'];
+
+        class Block {
+            constructor(x, y, number, user, board) {
+                this.x = x;
+                this.y = y;
+                this.number = number;
+                this.user = user;
+                this.board = board;
+                this.isFront = true;
+            }
+
+            move() {
+                const blockDiv = document.getElementById(this.number);
+                blockDiv.style.top = (this.x + 0.2) * 100 + "px";
+                blockDiv.style.left = (-150 + (this.y * 100)) + "px";
+            }
+
+            rotate() {
+                const blockDiv = document.getElementById(this.number);
+                this.isFront = !this.isFront; // 앞면과 뒷면 상태 변경
+                if (this.isFront) {
+                    blockDiv.classList.remove('rotate');
+                } else {
+                    blockDiv.classList.add('rotate'); 
+                }
+            }
+
+            render() {
+                const blockDiv = document.createElement("div");
+                blockDiv.id = this.number;
+                blockDiv.classList.add("block");
+                blockDiv.innerHTML = `
+                    <div class="front">${this.number}</div>
+                    <div class="back">${this.user}</div>
+                `;
+                const boardDiv = document.getElementById("board");
+                boardDiv.append(blockDiv);
+                this.move();
+
+                // 클릭 이벤트 추가
+                blockDiv.addEventListener("click", () => {
+                    this.rotate();
+                });
+            }
+        }
+
+        // 게임판 생성 함수
+        const createBoard = () => {
+            const board = new Array(3);
+            for (let i = 0; i < 3; i++) {
+                board[i] = new Array(5);
+            }
+            return board;
+        };
+
+        // 보드판 블록 할당 함수
+        const createBlock = (board, blockList) => {
+            let count = 0;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 5; j++) {
+                    if (i !== 1) {
+                        board[i][j] = new Block(i, j, count, users[count++], board);
+                        board[i][j].render();
+                        blockList.push(board[i][j]);
+                    } else {
+                        board[i][j] = null;
+                    }
+                }
+            }
+        };
+
+        let seat = [
+            [0, 0], [0, 1], [0, 2], [0, 3], [0, 4],
+            [2, 0], [2, 1], [2, 2], [2, 3], [2, 4]
+        ];
+
+        const mixPosition = (blockList) => {
+            console.log(seat);
+            // Sattolo 알고리즘
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i >= 1; i--) {
+                    let roll = Math.floor(Math.random() * i);
+                    const temp = array[roll];
+                    array[roll] = array[i];
+                    array[i] = temp;
+                }
+                return array;
+            }
+
+            const shuffledSeat = shuffleArray([...seat]);
+            blockList.forEach((block, index) => {
+                const coorXy = shuffledSeat[index]; // 랜덤 자리 선택
+                // 현재 x좌표와 y좌표에 자리할당
+                block.x = coorXy[0];
+                block.y = coorXy[1];
+                block.move();
+            });
+            seat = shuffledSeat;
+        };
+
+        const flipAllButton = document.getElementById("flipAllButton");
+
+        // 모든 블록을 뒤집는 함수
+        const flipAllBlocks = (blockList) => {
+            blockList.forEach(block => {
+                if (block.isFront)
+                    block.rotate(); // 각 블록을 뒤집기
+            });
+        };
+
+        // 한번에 보기 버튼 클릭 시 이벤트 처리
+        flipAllButton.addEventListener("click", () => {
+            flipAllBlocks(blockList);
+        });
+
+        // 보드판 및 블록 생성
+        const board = createBoard();
+        const blockList = [];
+        createBlock(board, blockList);
+
+        // 시작 버튼 이벤트 처리
+        startButton.addEventListener("click", () => {
+            mixPosition(blockList);
+        });
+    </script>
+</body>
+</html>

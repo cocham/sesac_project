@@ -1,0 +1,71 @@
+body {
+display: flex;
+align-items: center;
+justify-content: center; /* 세로 중앙 정렬을 위한 추가 */
+height: 100vh; /* 화면 전체 높이를 차지하도록 설정 */
+}
+
+.screen {
+    float: left;
+    margin-right: 200px;
+    border: 5px solid;
+    margin-top: -150px;
+    align-content: center;
+    padding-inline: 10px;
+    height: 200px;
+}
+.menu button {
+padding: 10px 20px; /* 버튼 내부 여백 설정 */
+font-size: 16px; /* 폰트 크기 설정 */
+margin: 0 10px; /* 버튼 간격 설정 */
+cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능한 상태로 설정 */
+margin-top: 400px;
+}
+
+#board {
+position: relative;
+display: flex;
+align-items: center; /* 가로 중앙 정렬을 위한 추가 */
+margin-top: -500px;
+}
+
+.block {
+position: absolute;
+width: 100px;
+height: 100px;
+border: 2px solid black;
+border-radius: 20px;
+transition: top 1s, left 1s;
+text-align: center;
+line-height: 100px;
+font-size: 25px;
+font-weight: bold;
+cursor: pointer;
+}
+
+.front, .back {
+position: absolute;
+width: 100%;
+height: 100%;
+backface-visibility: hidden; /*뒷면이 보이지 않도록 설정*/
+transition: transform 0.5s ease; /* 변형 애니메이션 추가 */
+}
+
+.block.rotate .front {
+transform: rotateY(180deg); /* 앞면 회전하여 숨기기 */
+}
+
+.block.rotate .back {
+transform: rotateY(0deg); /* 뒷면 보이도록 회전 */
+}
+
+.back {
+transform: rotateY(180deg); /* 초기에는 뒷면 숨김 */
+} 
+
+button:hover {
+cursor: pointer;
+}
+
+
+
