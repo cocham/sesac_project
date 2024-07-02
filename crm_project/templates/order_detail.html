@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Order Detail{% endblock %}
+
+{% block content %}
+
+<table border="1">
+    <tr>
+        {% for header in headers %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+    <tr> 
+        {% for attribute in [order.id,order.orderat,order.storeid,order.userid] %}
+                <td> {{ attribute }}</td>
+        {% endfor %}
+    </tr>
+</table>
+
+
+
+{% endblock %}

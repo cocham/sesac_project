@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Store{% endblock %}
+
+{% block content %}
+<form action="/stores" method="GET">
+    <input type="text" name="name" value = "{{ search_store }}" placeholder="가게명 검색">
+    <input type="submit" value="검색">
+    <label for="per_page">페이지당 항목 수: </label>
+    <select name="per_page" onchange="this.form.submit()">
+        {% for num in [5,10,15,20] %}
+            <option value="{{ num }}"{% if per_page == num %} selected {% endif %}>{{ num }}</option>
+        {% endfor %}    
+    </select>
+</form>
+
+<table border="1">
+    <tr>
+    {% for header in headers %}
+        <th> {{ header }} </th>
+    {% endfor %}
+    </tr>
+
+
+    {% for store in stores %}
+        <tr> 
+            <td>{{ loop.index + start_index }}</td>
+            {% for attribute in [store.id,store.type,store.name,store.address] %}
+                {% if attribute == store.id %}
+                    <td><a href="/store-detail/{{attribute}}">{{attribute}}</a></td>
+                {% else %}
+                    <td> {{ attribute }}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="?page={{ page - 1 }}&name={{ search_store }}&per_page={{ per_page }}">이전</a>
+    {% endif %}
+    
+    {% if total_pages <= 10 %}
+        {% for page_num in range(1, total_pages + 1) %}
+            {% if page_num == page %}
+                <span class="active">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}&name={{ search_store }}&per_page={{ per_page }}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if total_pages > 10 and page < 10 %}
+        {% for page_num in range(1, 11) %}
+            {% if page_num == page %}
+                <span class="active">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}&name={{ search_store }}&per_page={{ per_page }}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        <span>...</span>
+        <a href="?page={{ total_pages }}&name={{ search_store }}&per_page={{ per_page }}">{{ total_pages }}</a>
+        &nbsp; &nbsp;
+    {% endif %}
+
+    {% if page >= 10 and total_pages > 10 and page < total_pages - 9 %}
+        <a href="?page=1&name={{ search_store }}&per_page={{ per_page }}">1</a>
+        <span>...</span>
+        {% for offset in range(-5, 5) %}
+            {% set page_num = page + offset %}
+            {% if page_num >= 1 and page_num <= total_pages %}
+                {% if page_num == page %}
+                    <span class="active">{{ page_num }}</span>
+                {% else %}
+                    <a href="?page={{ page_num }}&name={{ search_store }}&per_page={{ per_page }}">{{ page_num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <span>...</span>
+        <a href="?page={{ total_pages }}&name={{ search_store }}&per_page={{ per_page }}">{{ total_pages }}</a>
+    {% endif %}
+    
+    {% if total_pages - 9 <= page < total_pages - 4 and total_pages > 10 %}
+        <a href="?page=1&name={{ search_store }}&per_page={{ per_page }}">1</a>
+        <span>...</span>
+        {% for offset in range(-5, 5) %}
+            {% set page_num = page + offset %}
+            {% if page_num >= 1 and page_num <= total_pages %}
+                {% if page_num == page %}
+                    <span class="active">{{ page_num }}</span>
+                {% else %}
+                    <a href="?page={{ page_num }}&name={{ search_store }}&per_page={{ per_page }}">{{ page_num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <span>...</span>
+        <a href="?page={{ total_pages }}&name={{ search_store }}&per_page={{ per_page }}">{{ total_pages }}</a>
+    {% endif %}
+
+    {% if page >= total_pages - 4 and total_pages > 10 %}
+        <a href="?page=1&name={{ search_store }}&per_page={{ per_page }}">1</a>
+        <span>...</span>
+        {% for page_num in range(total_pages - 9, total_pages + 1) %}
+            {% if page_num == page %}
+                <span class="active">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}&name={{ search_store }}&per_page={{ per_page }}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}&per_page={{ per_page }}&name={{ search_store }}">다음</a>
+    {% endif %}
+</div>
+
+
+{% endblock %}

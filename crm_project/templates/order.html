@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Order{% endblock %}
+
+{% block content %}
+<form action="/orders" method="GET">
+    <label for="order_date">주문 날짜 선택: </label>
+    <select name="order_date" onchange="this.form.submit()">
+        {% for date in ["전체","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08",
+        "2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06"] %}
+            <option value="{{ date }}"{% if order_date == date %} selected {% endif %}>{{ date }}</option>
+        {% endfor %}    
+    </select>
+    <label for="per_page">페이지당 항목 수: </label>
+    <select name="per_page" onchange="this.form.submit()">
+        {% for num in [5,10,15,20] %}
+            <option value="{{ num }}"{% if per_page == num %} selected {% endif %}>{{ num }}</option>
+        {% endfor %}    
+    </select>
+</form>
+<table border="1">
+    <tr>
+    {% for header in headers %}
+        <th> {{ header }} </th>
+    {% endfor %}
+    </tr>
+
+    {% for o in orders %}
+        <tr class="user-row" onclick="window.location='/orders/orderitem-detail/{{ o.id }}';" > 
+            <td>{{ loop.index + start_index }}</td>
+            {% for attribute in [o.id,o.orderat,o.storeid,o.userid] %}
+                {% if attribute == o.id %}
+                    <td><a href="/orders/orderitem-detail/{{attribute}}">{{ attribute }}</a></td>
+                {% else %}
+                    <td>{{ attribute }}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="?page={{ page - 1 }}&per_page={{ per_page }}&order_date={{order_date}}">이전</a>
+    {% endif %}
+    
+    {% if total_pages <= 10 %}
+        {% for page_num in range(1, total_pages + 1) %}
+            {% if page_num == page %}
+                <span class="active">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}&per_page={{ per_page }}&order_date={{order_date}}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if total_pages > 10 and page < 10 %}
+        {% for page_num in range(1, 11) %}
+            {% if page_num == page %}
+                <span class="active">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}&per_page={{ per_page }}&order_date={{order_date}}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        <span>...</span>
+        <a href="?page={{ total_pages }}&per_page={{ per_page }}&order_date={{order_date}}">{{ total_pages }}</a>
+        &nbsp; &nbsp;
+    {% endif %}
+
+    {% if page >= 10 and total_pages > 10 and page < total_pages - 9 %}
+        <a href="?page=1&per_page={{ per_page }}&order_date={{order_date}}">1</a>
+        <span>...</span>
+        {% for offset in range(-5, 5) %}
+            {% set page_num = page + offset %}
+            {% if page_num >= 1 and page_num <= total_pages %}
+                {% if page_num == page %}
+                    <span class="active">{{ page_num }}</span>
+                {% else %}
+                    <a href="?page={{ page_num }}&per_page={{ per_page }}&order_date={{order_date}}">{{ page_num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <span>...</span>
+        <a href="?page={{ total_pages }}&per_page={{ per_page }}&order_date={{order_date}}">{{ total_pages }}</a>
+    {% endif %}
+    
+    {% if total_pages - 9 <= page < total_pages - 4 and total_pages > 10 %}
+        <a href="?page=1&per_page={{ per_page }}&order_date={{order_date}}">1</a>
+        <span>...</span>
+        {% for offset in range(-5, 5) %}
+            {% set page_num = page + offset %}
+            {% if page_num >= 1 and page_num <= total_pages %}
+                {% if page_num == page %}
+                    <span class="active">{{ page_num }}</span>
+                {% else %}
+                    <a href="?page={{ page_num }}&per_page={{ per_page }}&order_date={{order_date}}">{{ page_num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <span>...</span>
+        <a href="?page={{ total_pages }}&per_page={{ per_page }}&order_date={{order_date}}">{{ total_pages }}</a>
+    {% endif %}
+
+    {% if page >= total_pages - 4 and total_pages > 10 %}
+        <a href="?page=1&per_page={{ per_page }}&order_date={{order_date}}">1</a>
+        <span>...</span>
+        {% for page_num in range(total_pages - 9, total_pages + 1) %}
+            {% if page_num == page %}
+                <span class="active">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}&per_page={{ per_page }}&order_date={{order_date}}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}&per_page={{ per_page }}&order_date={{order_date}}">다음</a>
+    {% endif %}
+</div>
+
+{% endblock %}

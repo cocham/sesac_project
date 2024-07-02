@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}User Detail{% endblock %}
+
+{% block content %}
+
+<h8>[고객 정보]</h8>
+<table border="1">
+    <tr>
+        {% for header in headers1 %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+    <tr> 
+        {% for attribute in [user.id,user.name,user.gender,user.age,user.birthday,user.address] %}
+                <td> {{ attribute }}</td>
+        {% endfor %}
+    </tr>
+</table>
+
+<h8>[주문 정보]</h8>
+<table border="1">
+    <tr>
+        {% for header in headers2 %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+
+    {% for order in orders %}
+    <tr> 
+        {% for attribute in [order.id,order.orderat,order.storeid] %}
+            {% if attribute == order.id %}
+                <td><a href="/orders/orderitem-detail/{{attribute}}">{{attribute}}</a></td>
+            {% else %}
+                <td>{{ attribute }}</td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+
+<h8>[자주 방문한 매장 TOP 5]</h8>
+<table border="1">
+
+    <tr>
+        <th>매장 이름</th>
+        <th>방문 횟수</th>
+    </tr>
+
+
+    {% for store in top_stores %}
+    <tr>
+        <td>{{ store[0].name }}</td>
+        <td>{{ store[1] }}번 방문</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<h8>[자주 주문한 상품명 TOP 5]</h8>
+<table border="1">
+
+    <tr>
+        <th>상품명</th>
+        <th>주문 횟수</th>
+    </tr>
+
+    {% for item in top_items %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}번 주문</td>
+        </tr>
+    {% endfor %}
+
+</table>
+
+
+
+{% endblock %}

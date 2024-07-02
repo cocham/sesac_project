@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Order Item{% endblock %}
+
+{% block content %}
+
+<h1>오더 정보</h1>
+
+<table border="1">
+    <tr>
+        {% for header in headers %}
+            <th>{{header}}</th>
+        {% endfor %}
+    </tr>
+    {% for i in range(oinfo|length) %}
+        <tr>
+            <td>{{oinfo[i].id}}</td>
+            <td><a href="/orders/order-detail/{{oinfo[i].orderid}}">{{oinfo[i].orderid}}</a></td>
+            <td><a href="/orders/item-detail/{{oinfo[i].itemid}}">{{oinfo[i].itemid}}</a></td>
+            <td>{{onames[i]}}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

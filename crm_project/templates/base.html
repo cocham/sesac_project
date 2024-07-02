@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{%block title%}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+    <nav>
+        <button id="btn" onclick="history.back()">뒤로</button>
+        <a href="{{ url_for('user')}}">User</a>      
+        <a href="{{ url_for('order')}}">Order</a>
+        <a href="{{ url_for('order_item')}}">Order-Item</a>
+        <a href="{{ url_for('item')}}">Item</a>
+        <a href="{{ url_for('store')}}">Store</a>
+        <button id="btn" onclick="history.forward()">앞으로</button>
+    </nav>
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

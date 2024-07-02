@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Store Detail{% endblock %}
+
+{% block content %}
+<h8>[매장정보]</h8>
+<table border="1">
+    <tr>
+        {% for header in headers1 %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+    <tr> 
+        {% for attribute in [store.name,store.type,store.address] %}
+            <td>{{attribute}}</td>
+        {% endfor %}
+    </tr>
+</table>
+
+<h8>[월간 매출액]</h8>
+<table border="1">
+    <tr>
+        {% for header in headers2 %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+
+    {% for sales in revenue_2023 %}
+    <tr> 
+    <td><a href="/store-detail/{{storeid}}/{{sales[0]}}">{{sales[0]}}</a></td>
+    <td>{{sales[1]}}</td>
+    <td>{{sales[2]}}</td>
+    </tr>
+    {% endfor %}
+
+
+    {% for sales in revenue_2024 %}
+    <tr> 
+    <td><a href="/store-detail/{{storeid}}/{{sales[0]}}">{{sales[0]}}</a></td>
+    <td>{{sales[1]}}</td>
+    <td>{{sales[2]}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<h8>[단골 고객]</h8>
+<table border="1">
+    <tr>
+        {% for header in headers3 %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+
+    {% for user in top_users %}
+    <tr> 
+        <td><a href="/user/{{user[0]}}">{{user[0]}}</a></td>
+        <td>{{user[1]}}</td>
+        <td>{{user[2]}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Item Detail{% endblock %}
+
+{% block content %}
+
+<h8>[상품 정보]</h8>
+<table border="1">
+    <tr>
+        {% for header in headers1 %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+    <tr>
+        {% for attirbute in [item.name,item.unitprice] %}
+            <td> {{attirbute}} </td>
+        {% endfor %}
+    </tr>
+</table>
+
+<h8>[월간 매출액]</h8>
+<table border="1">
+    <tr>
+        {% for header in headers2 %}
+            <th> {{ header }}</th>
+        {% endfor %}
+    </tr>
+
+    {% for sales in revenue_2023 %}
+    <tr>
+            <td>{{sales [0]}}</td>
+            <td>{{sales [1]}}</td>
+            <td>{{sales [2]}}</td>
+    </tr>
+    {% endfor %}
+
+    {% for sales in revenue_2024 %}
+    <tr>
+            <td>{{sales [0]}}</td>
+            <td>{{sales [1]}}</td>
+            <td>{{sales [2]}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
