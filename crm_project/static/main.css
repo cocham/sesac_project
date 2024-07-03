@@ -17,6 +17,10 @@ nav a:hover {
     background-color: #0056b3; /* 호버 시 배경색 변경 */
 }
 
+nav a.active {
+    background-color: #0056b3; /* 현재 페이지 링크의 배경색 변경 */
+}
+
 form {
     display: flex;
     align-items: center;

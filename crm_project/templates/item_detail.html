@@ -12,9 +12,8 @@
     </tr>
 
     <tr>
-        {% for attirbute in [item.name,item.unitprice] %}
-            <td> {{attirbute}} </td>
-        {% endfor %}
+        <td>{{item[0][0]}}</td>
+        <td>{{item[0][1]}}원</td>
     </tr>
 </table>
 
@@ -29,16 +28,16 @@
     {% for sales in revenue_2023 %}
     <tr>
             <td>{{sales [0]}}</td>
-            <td>{{sales [1]}}</td>
-            <td>{{sales [2]}}</td>
+            <td>{{sales [1]}}원</td>
+            <td>{{sales [2]}}개</td>
     </tr>
     {% endfor %}
 
     {% for sales in revenue_2024 %}
     <tr>
             <td>{{sales [0]}}</td>
-            <td>{{sales [1]}}</td>
-            <td>{{sales [2]}}</td>
+            <td>{{sales [1]}}원</td>
+            <td>{{sales [2]}}개</td>
     </tr>
     {% endfor %}
 </table>

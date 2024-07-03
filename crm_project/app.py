@@ -1,10 +1,11 @@
-from flask import Flask,request,render_template,url_for,redirect
+from flask import Flask,request,render_template,flash,redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func,asc
 from dbgenerate.db import db,User,Store,Order,Orderitem,Item
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
+app.secret_key = 'my_admin_page'
 # SQLite 데이터베이스 파일 경로 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/sesac_project/crm_project/dbgenerate/instance/allinfo.db'
 db.init_app(app)
@@ -16,21 +17,20 @@ def paginate_data(page_number, per_page, data_list):
 
 @app.route('/')
 def main():
-    return render_template('base.html')
+    return render_template('main.html')
 
 @app.route('/users')
 def user():
     users = User.query.all()
-    
     page = request.args.get('page',default=1,type=int)
     search_name = request.args.get('name',default='',type=str) #아무것도 입력 안 한 상태에서 검색을 누르면 홈으로 되돌아 갈 수 있게..
     per_page = request.args.get('per_page',default=10,type=int)
-    gender = request.args.get('gender',default='',type=str)
+    gender = request.args.get('gender',default='All',type=str)
 
     if gender == 'Female':
         get_user = [user for user in users if (search_name in user.name and user.gender == 'Female')]
     elif str(gender) == 'Male':
-        get_user = [user for user in users if (search_name in user.name and user.gender == 'Male')]
+        get_user = [user for user in users if (search_name in user.name and user.gender == 'male')]
     else:
         get_user = [user for user in users if search_name in user.name]
     start_index = (page-1) * per_page
@@ -100,12 +100,10 @@ def user_detail(uuid):
     #해당 UUID에 해당하는 사용자를 찾아서 데이터 전달
     user = User.query.filter_by(id=uuid).first()
     headers1 = ['Id','Name','Gender','Age','Birthday','Address']
-    headers2 = ['Order Id','Purchased Date','Purchased Location']
+    headers2 = ['Order Id','주문 날짜','주문 스토어 ID']
     orders = Order.query.filter_by(userid=user.id).all()
 
     top_stores,top_items = top_store_item(user.id)
-    for item in top_items:
-        print(f"{item[0]} {item[1]}번 주문")
     render_dict = {
         'user':user,
         'headers1':headers1,
@@ -121,6 +119,8 @@ def user_detail(uuid):
 def order():
     orders = Order.query.order_by(asc(Order.orderat)).all()
     page = request.args.get('page',default=1,type=int)
+    # # if page < 1:
+    # page = 1
     #주문언제 했는지로 검색?
     order_date = request.args.get('order_date',default='전체',type=str)
     if order_date == '전체':
@@ -203,7 +203,7 @@ def calculate_monthly_revenue(year,item):
                                     .filter(Item.name == item)\
                                     .scalar() or 0
         # 월별 매출액을 딕셔너리에 저장
-        monthly_sales.append([f"{year}-{month:02d}",monthly_revenue,monthly_sales_date])
+        monthly_sales.append([f"{year}-{month:02d}",format(monthly_revenue,','),monthly_sales_date])
 
     return monthly_sales
 
@@ -211,8 +211,9 @@ def calculate_monthly_revenue(year,item):
 def item_detail(itemid):
     headers1 = ['Name','Unit Price']
     item = Item.query.filter_by(id=itemid).first()
+    format_item = [(item.name,format(item.unitprice,','))]
     item_name = item.name
-    headers2 = ['Month','Total Revenue','Item Count']
+    headers2 = ['Date','Total Revenue','Item Count']
 
     revenue_2023 = calculate_monthly_revenue(2023,item_name)
     revenue_2024 = calculate_monthly_revenue(2024,item_name)
@@ -220,7 +221,7 @@ def item_detail(itemid):
     render_dict = {
         'headers1':headers1,
         'headers2':headers2,
-        'item':item,
+        'item':format_item,
         'item_name':item_name,
         'revenue_2023':revenue_2023,
         'revenue_2024':revenue_2024
@@ -253,16 +254,23 @@ def order_item():
 @app.route('/items')
 def item():
     items = Item.query.all()
+    format_items = []
+    for item in items:
+        format_items.append((item.id,item.type,item.name,format(item.unitprice,',')))
 
     page = request.args.get('page',default=1,type=int)
     per_page = request.args.get('per_page',default=10,type=int)
-    item_type = request.args.get('item_type',default='',type=str)
-    get_item = [item for item in items if item_type in item.type]
+    item_type = request.args.get('item_type',default='All',type=str)
+
+    if item_type == 'All':
+        get_item = format_items
+    else:
+        get_item = [item for item in format_items if item_type == item[1]]
 
     start_index = (page-1) * per_page
     total_pages = len(get_item) // per_page + (1 if len(get_item) % per_page > 0 else 0)
     current_data = paginate_data(page,per_page,get_item)
-    
+
     render_dict = {
     'headers':['Index','Id','Type','Name','Unit Price'],
     'items':current_data,
@@ -333,7 +341,7 @@ def store_monthly_revenue(year,storeid):
                                 .scalar() or 0
         
         # 월별 매출액을 딕셔너리에 저장
-        monthly_sales.append([f"{year}-{month:02d}",monthly_revenue,monthly_items_sold])
+        monthly_sales.append([f"{year}-{month:02d}",format(monthly_revenue,','),monthly_items_sold])
 
     return monthly_sales
 
@@ -355,7 +363,7 @@ def often_user(storeid):
 def store_detail(uuid):
     store = Store.query.filter_by(id=uuid).first()
     headers1 = ['Name','Type','Address']
-    headers2 = ['Month','Revenue','Count']
+    headers2 = ['Date','Revenue','Count']
     headers3 = ['User_Id','Name','Frequency']
     revenue_2023 = store_monthly_revenue(2023,store.id)
     revenue_2024 = store_monthly_revenue(2024,store.id)
@@ -375,7 +383,7 @@ def store_detail(uuid):
     return render_template('store_detail.html',**render_dict)
 
 
-# 연도와 월별 매출액을 계산하는 함수(스토어)
+# 연도와 일간 매출액을 계산하는 함수(스토어)
 def store_monthdetail_revenue(year,storeid,month):
     start_date = datetime(year, month, 1)
     if month == 12:
@@ -399,6 +407,7 @@ def store_monthdetail_revenue(year,storeid,month):
     ).order_by(
         func.strftime('%Y-%m-%d', Order.orderat)
     ).all()
+
 
     return monthly_sales
 
@@ -433,15 +442,18 @@ def store_detail_month(uuid,month):
     headers1 = ['Name','Type','Address']
     headers2 = ['Month','Revenue','Count']
     headers3 = ['User_Id','Name','Frequency']
-
+    # format(monthly_revenue,',')
     month_sales = store_monthdetail_revenue(year,store.id,month)
+    format_month_sales = []
+    for ms in month_sales:
+        format_month_sales.append((ms.day,format(ms.revenue,','),ms.count))
     month_users = often_monthly_user(year,month,store.id,len(month_sales))
     render_dict = {
         'store':store,
         'headers1':headers1,
         'headers2':headers2,
         'headers3':headers3,
-        'month_sales':month_sales,
+        'month_sales':format_month_sales,
         'month_users':month_users
     }
 
@@ -451,3 +463,4 @@ def store_detail_month(uuid,month):
 
 if __name__ == "__main__":
     app.run(debug=True)
+    # app.run(host = "0.0.0.0", debug=True)

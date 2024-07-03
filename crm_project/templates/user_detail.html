@@ -32,6 +32,8 @@
         {% for attribute in [order.id,order.orderat,order.storeid] %}
             {% if attribute == order.id %}
                 <td><a href="/orders/orderitem-detail/{{attribute}}">{{attribute}}</a></td>
+            {% elif attribute == order.storeid %}
+                <td><a href="/store-detail/{{attribute}}">{{attribute}}</a></td>
             {% else %}
                 <td>{{ attribute }}</td>
             {% endif %}

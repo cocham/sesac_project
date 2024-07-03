@@ -5,7 +5,7 @@
 <form action="/items" method="GET">
     <label for="item_type">상품 타입 선택: </label>
     <select name="item_type" onchange="this.form.submit()">
-        {% for item in ["","Coffee","Juice","Cake","Bread"] %}
+        {% for item in ["All","Coffee","Juice","Cake","Bread"] %}
             <option value="{{ item }}"{% if item_type == item %} selected {% endif %}>{{ item }}</option>
         {% endfor %}    
     </select>
@@ -23,16 +23,13 @@
     {% endfor %}
     </tr>
 
-    {% for i in items %}
+    {% for item in items %}
         <tr> 
             <td>{{ loop.index + start_index }}</td>
-            {% for attribute in [i.id,i.type,i.name,i.unitprice] %}
-                {% if attribute == i.id %}
-                    <td><a href="/orders/item-detail/{{attribute}}">{{ attribute }}</a></td>
-                {% else %}
-                    <td>{{ attribute }}</td>
-                {% endif %}
-            {% endfor %}
+            <td><a href="/orders/item-detail/{{item[0]}}">{{ item[0] }}</a></td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+            <td>{{ item[3] }}원</td>
         </tr>
     {% endfor %}
 </table>

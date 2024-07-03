@@ -29,8 +29,8 @@
     {% for sales in revenue_2023 %}
     <tr> 
     <td><a href="/store-detail/{{storeid}}/{{sales[0]}}">{{sales[0]}}</a></td>
-    <td>{{sales[1]}}</td>
-    <td>{{sales[2]}}</td>
+    <td>{{sales[1]}}원</td>
+    <td>{{sales[2]}}개</td>
     </tr>
     {% endfor %}
 
@@ -38,8 +38,8 @@
     {% for sales in revenue_2024 %}
     <tr> 
     <td><a href="/store-detail/{{storeid}}/{{sales[0]}}">{{sales[0]}}</a></td>
-    <td>{{sales[1]}}</td>
-    <td>{{sales[2]}}</td>
+    <td>{{sales[1]}}원</td>
+    <td>{{sales[2]}}개</td>
     </tr>
     {% endfor %}
 </table>
@@ -58,7 +58,7 @@
     <tr> 
         <td><a href="/user/{{user[0]}}">{{user[0]}}</a></td>
         <td>{{user[1]}}</td>
-        <td>{{user[2]}}</td>
+        <td>{{user[2]}}번 방문</td>
     </tr>
     {% endfor %}
 </table>

@@ -7,7 +7,7 @@
         <input type="submit" value="검색">
         <label for="gender">Gender: </label>
         <select name="gender" onchange="this.form.submit()">
-            {% for option in ['','Female','Male'] %}
+            {% for option in ['All','Female','Male'] %}
                 <option value={{option}} {% if gender == option %} selected {% endif %}>{{option}}</option>
             {% endfor %}
         </select>
