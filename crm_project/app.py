@@ -30,7 +30,7 @@ def user():
     if gender == 'Female':
         get_user = [user for user in users if (search_name in user.name and user.gender == 'Female')]
     elif str(gender) == 'Male':
-        get_user = [user for user in users if (search_name in user.name and user.gender == 'male')]
+        get_user = [user for user in users if (search_name in user.name and user.gender == 'Male')]
     else:
         get_user = [user for user in users if search_name in user.name]
     start_index = (page-1) * per_page
