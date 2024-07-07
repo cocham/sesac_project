@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <link rel="stylesheet" href="/static/main.css">
+
+</head>
+<body>
+    <form id="search-form">
+        <input type="text" id="search-name" placeholder="사용자 이름 검색">
+        <button type="button" onclick="fetchUsers()">검색</button>
+
+        <select id="gender-select" onchange="fetchUsers()">
+            <option value="All" selected>All</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+        </select>
+
+        <select id="per-page-select" onchange="fetchUsers()">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
+    </form>
+
+    <table border="1" id="user-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Age</th>
+                <th>Birthday</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body">
+            <!-- 동적으로 데이터 추가 -->
+        </tbody>
+    </table>
+
+    <div id="pagination" class="pagination">
+        <!-- 페이지네이션 버튼 추가 -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchUsers();
+        });
+
+        function fetchUsers() {
+            const searchName = document.getElementById('search-name').value;
+            const gender = document.getElementById('gender-select').value;
+            const perPage = document.getElementById('per-page-select').value;
+            const page = 1;  
+
+            fetch(`/api/users?page=${page}&name=${encodeURIComponent(searchName)}&per_page=${perPage}&gender=${gender}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderUserTable(data.users);
+                    renderPagination(data.total_pages, page);
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+
+        function renderUserTable(users) {
+            const tableBody = document.getElementById('user-table-body');
+            tableBody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = user.id;
+                row.insertCell(1).textContent = user.name;
+                row.insertCell(2).textContent = user.gender;
+                row.insertCell(3).textContent = user.age;
+                row.insertCell(4).textContent = user.birthday;
+                row.insertCell(5).textContent = user.address;
+            });
+        }
+
+        function generatePagination(page, total_pages, search_name, per_page, gender) {
+            let paginationHtml = '';
+
+            // 이전 페이지 링크
+            if (page > 1) {
+                paginationHtml += `<a href="#" onclick="fetchPage(${page - 1}, '${search_name}', ${per_page}, '${gender}')">이전</a>`
+            }
+
+            // 페이지 링크들
+            if (total_pages <= 10) {
+                for (let page_num = 1; page_num <= total_pages; page_num++) {
+                    if (page_num === page) {
+                        paginationHtml += `<span class="active">${page_num}</span>`;
+                    } else {
+                        paginationHtml += `<a href="#" onclick="fetchPage(${page_num}, '${search_name}', ${per_page}, '${gender}')">${page_num}</a>`;                
+                    }
+                }
+            } 
+
+            if (total_pages > 10 && page < 10) {
+                for (let page_num = 1; page_num<=10; page_num++){
+                    if (page_num == page){
+                        paginationHtml += `<span class="active">${page_num}</span>`;
+                    }
+                    else {
+                        paginationHtml += `<a href="#" onclick="fetchPage(${page_num}, '${search_name}', ${per_page}, '${gender}')">${page_num}</a>`;                
+                    }
+                }
+                paginationHtml += `<span class="active">...</span>`;
+                paginationHtml +=  `<a href="#" onclick="fetchPage(${total_pages}, '${search_name}', ${per_page}, '${gender}')">${total_pages}</a>`;
+
+                let text = document.createTextNode("\u00a0\u00a0");
+            }
+
+
+            if (page >= 10 && total_pages > 10 && page < total_pages - 9){
+                paginationHtml += `<a href="#" onclick="fetchPage(1, '${search_name}', ${per_page}, '${gender}')">1</a>`;
+                paginationHtml += `<span class="active">...</span>`;
+
+                for (let offset = -5; offset<5; offset++){
+                    let page_num = page + offset
+                    if (page_num >= 1 && page_num <= total_pages){
+                        if (page_num == page){
+                            paginationHtml += `<span class="active">${page_num}</span>`;
+                        }
+                        else{
+                            paginationHtml += `<a href="#" onclick="fetchPage(${page_num}, '${search_name}', ${per_page}, '${gender}')">${page_num}</a>`;                
+                        }
+                    }
+                }
+                paginationHtml += `<span class="active">...</span>`;
+                paginationHtml += `<a href="#" onclick="fetchPage(${total_pages}, '${search_name}', ${per_page}, '${gender}')">${total_pages}</a>`;
+            }
+            
+            if (total_pages - 9 <= page && page < total_pages - 4 && total_pages > 10){
+                paginationHtml += `<a href="#" onclick="fetchPage(1, '${search_name}', ${per_page}, '${gender}')">1</a>`;
+                paginationHtml += `<span class="active">...</span>`;
+
+                for (let offset = -5; offset<5; offset++){
+                    let page_num = page + offset
+                    if (page_num >= 1 && page_num <= total_pages){
+                        if (page_num == page){
+                            paginationHtml += `<span class="active">${page_num}</span>`;
+                        }
+                        else{
+                            paginationHtml += `<a href="#" onclick="fetchPage(${page_num}, '${search_name}', ${per_page}, '${gender}')">${page_num}</a>`;                
+                        }
+                    }
+                }
+                paginationHtml += `<span class="active">...</span>`;
+                paginationHtml += `<a href="#" onclick="fetchPage(${total_pages}, '${search_name}', ${per_page}, '${gender}')">${total_pages}</a>`;
+            }
+
+            if (page >= total_pages - 4 && total_pages > 10){
+                paginationHtml += `<a href="?page=1&name=${search_name}&per_page=${per_page}&gender=${gender}">1</a>`;
+                paginationHtml += `<span class="active">...</span>`;
+
+                for (let page_num = total_pages - 9; page_num < total_pages + 1; page_num++){
+                    if (page_num == page){
+                        paginationHtml += `<span class="active">${page_num}</span>`;
+                    }
+                    else{
+                        paginationHtml += `<a href="#" onclick="fetchPage(${page_num}, '${search_name}', ${per_page}, '${gender}')">${page_num}</a>`;                
+                    }
+                }
+            }
+
+            if (page < total_pages){
+                paginationHtml += `<a href="#" onclick="fetchPage(${page+1}, '${search_name}', ${per_page}, '${gender}')">다음</a>`;                
+                }
+
+                return paginationHtml;
+            }
+        
+        function renderPagination(total_pages, current_page) {
+            const searchName = document.getElementById('search-name').value;
+            const gender = document.getElementById('gender-select').value;
+            const perPage = document.getElementById('per-page-select').value;
+
+            const paginationHtml = generatePagination(current_page, total_pages, searchName, perPage, gender);
+            document.getElementById('pagination').innerHTML = paginationHtml;
+        }
+
+
+        function fetchPage(page) {
+            const searchName = document.getElementById('search-name').value;
+            const gender = document.getElementById('gender-select').value;
+            const perPage = document.getElementById('per-page-select').value;
+
+            fetch(`/api/users?page=${page}&name=${encodeURIComponent(searchName)}&per_page=${perPage}&gender=${gender}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderUserTable(data.users);
+                    renderPagination(data.total_pages,page);
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+    </script>
+</body>
+</html>

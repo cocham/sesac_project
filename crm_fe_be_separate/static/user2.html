@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+</head>
+<body>
+    <form id="search-form">
+        <input type="text" id="search-name" placeholder="사용자 이름 검색">
+        <button type="button" onclick="fetchUsers()">검색</button>
+
+        <select id="gender-select" onchange="fetchUsers()">
+            <option value="All" selected>All</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+        </select>
+
+        <select id="per-page-select" onchange="fetchUsers()">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
+    </form>
+
+    <table border="1" id="user-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Age</th>
+                <th>Birthday</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body">
+            <!-- 여기에 동적으로 데이터가 추가될 것입니다. -->
+        </tbody>
+    </table>
+
+    <div id="pagination" class="pagination">
+        <!-- 페이지네이션 버튼이 여기에 추가될 것입니다. -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchUsers();
+        });
+
+        function fetchUsers() {
+            const searchName = document.getElementById('search-name').value;
+            const gender = document.getElementById('gender-select').value;
+            const perPage = document.getElementById('per-page-select').value;
+            const page = 1;  // 기본적으로 첫 페이지를 가져옵니다.
+
+            fetch(`/api/users?page=${page}&name=${encodeURIComponent(searchName)}&per_page=${perPage}&gender=${gender}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderUserTable(data.users);
+                    renderPagination(data.total_pages, page);
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+
+        function renderUserTable(users) {
+            const tableBody = document.getElementById('user-table-body');
+            tableBody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = user.id;
+                row.insertCell(1).textContent = user.name;
+                row.insertCell(2).textContent = user.gender;
+                row.insertCell(3).textContent = user.age;
+                row.insertCell(4).textContent = user.birthday;
+                row.insertCell(5).textContent = user.address;
+            });
+        }
+
+        function renderPagination(totalPages, currentPage) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const link = document.createElement('a');
+                link.href = `javascript:void(0);`;
+                link.textContent = i;
+
+                if (i === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.addEventListener('click', function() {
+                        fetchPage(i);
+                    });
+                }
+
+                pagination.appendChild(link);
+            }
+        }
+
+        function fetchPage(page) {
+            const searchName = document.getElementById('search-name').value;
+            const gender = document.getElementById('gender-select').value;
+            const perPage = document.getElementById('per-page-select').value;
+
+            fetch(`/api/users?page=${page}&name=${encodeURIComponent(searchName)}&per_page=${perPage}&gender=${gender}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderUserTable(data.users);
+                    renderPagination(data.total_pages, page);
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+    </script>
+</body>
+</html>
