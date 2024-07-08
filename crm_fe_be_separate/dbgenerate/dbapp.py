@@ -1,7 +1,8 @@
 import csv
 from flask import Flask
-from db import db,User,Store,Order,Orderitem,Item
+from db import db,Admin,User,Store,Order,Orderitem,Item
 from datetime import datetime
+import bcrypt
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///allinfo.db'
@@ -71,6 +72,16 @@ def load_csv_data(filename):
 if __name__=="__main__":
     with app.app_context():
         db.create_all()
+
+        #Admin 데이터 추가
+        admin_id = 'kimmeme'
+        admin_password = 'ncdasfje328'
+        hashed_password = bcrypt.hashpw(admin_password.encode('utf-8'), bcrypt.gensalt())
+
+        new_admin = Admin(id=admin_id, password=hashed_password)
+        db.session.add(new_admin)
+        db.session.commit()
+
         load_csv_data('users.csv')
         load_csv_data('stores.csv')
         load_csv_data('orders.csv')

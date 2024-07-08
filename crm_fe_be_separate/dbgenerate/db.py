@@ -1,7 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
+import bcrypt
 # from datetime import datetime,date
+
 db = SQLAlchemy()
 
+class Admin(db.Model):
+    id = db.Column(db.String, primary_key=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+        
 class User(db.Model):
     id = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(20))
