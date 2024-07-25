@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 페이지</title>
+    <link rel="stylesheet" href="/app/static/login.css">
+
+</head>
+<body>
+    <div class="login">
+        <div class="login-form">
+        <h2 class="text-center">로그인</h2>
+
+        <form method="POST" action="/login">
+            <!-- 사용자 아이디 -->
+            <div>
+                <input type="text" class="form-control" id="userid" name="userid">
+            </div>
+            <!-- 비밀번호 -->
+            <div>
+                <input type="password" class="form-control" id="userpw" name="userpw">
+            </div>
+            <!-- 로그인 버튼 -->
+            <button type="submit" class="btn btn-primary w-100" >확인</button>
+            <button type="submit" class="btn btn-primary w-100" formaction="/main">다음에 하기</button>
+            <a href="/signup">아직 플리에 가입하지 않으셨다면</a>
+        </form>
+    </div>
+</body>
+</html>

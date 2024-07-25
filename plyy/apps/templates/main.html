@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>플리 메인</h1>
+    <script>
+        // 세션에서 로그인 상태 확인
+        var loggedIn = "{{ session['id'] }}"; // Flask 세션에서 로그인한 사용자 아이디 가져오기
+        
+        // 로그인 상태에 따라 링크 추가
+        if (loggedIn) {
+            var logoutButton = document.createElement("button");
+            logoutButton.textContent = "로그아웃";
+            logoutButton.onclick = function() {
+                window.location.href = '/logout'; // 로그아웃 처리
+            };
+        document.body.appendChild(logoutButton);
+            var link = document.createElement("a");
+            link.href = "/curator/c_0401890c-3fe2-4142-a74e-e81fee61a7aa";
+            link.textContent = "큐레이터 빙키";
+            document.body.appendChild(link);
+        }
+    </script>
+</body>
+</html>

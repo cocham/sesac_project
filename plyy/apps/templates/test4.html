@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 간단한 스타일링 */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        .curator-info {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+        }
+        .curator-img {
+            max-width: 100%;
+            height: auto;
+        }
+        .curator-tags {
+            margin-top: 8px;
+        }
+        .playlist-item {
+            margin-bottom: 16px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 16px;
+        }
+        .playlist-img {
+            max-width: 100px;
+            height: auto;
+            margin-right: 10px;
+        }
+        .playlist-tags {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+<body>
+    <div id="curator-info-container"></div>
+
+    <script>
+    let heartFilled = false; // 초기 하트 상태 설정
+
+    function fetchCuratorData(c_uuid) {
+        fetch(`/plyy/api/curator/${encodeURIComponent(c_uuid)}`)
+            .then(response => response.json())
+            .then(data => {
+                const curatorInfo = data.curator.c_info;
+                const playlist = data.curator.plyy;
+                const isLiked = data.curator.c_info.c_liked; // 서버에서 받은 좋아요 상태
+                console.log(isLiked)
+                // curator 정보를 HTML로 만들어서 출력
+                const curatorInfoContainer = document.getElementById('curator-info-container');
+                curatorInfoContainer.innerHTML = `
+                    <div class="curator-info">
+                        <h2>${curatorInfo.c_name}</h2>
+                        <img class="curator-img" src="${curatorInfo.c_img}" alt="Curator Image">
+                        <p>${curatorInfo.c_intro}</p>
+                        <div class="curator-tags">
+                            <strong>Tags:</strong> ${curatorInfo.c_tags.join(', ')}
+                        </div>
+                        <svg id="heartIcon" width="46" height="46" viewBox="0 0 46 46" fill="${isLiked ? '#FF0000' : 'none'}" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="46" height="46" rx="23" fill="#F15A22"/>
+                            <path id="heartPath" d="M23.775 34.0125C23.35 34.1625 22.65 34.1625 22.225 34.0125C18.6 32.775 10.5 27.6125 10.5 18.8625C10.5 15 13.6125 11.875 17.45 11.875C19.725 11.875 21.7375 12.975 23 14.675C24.2625 12.975 26.2875 11.875 28.55 11.875C32.3875 11.875 35.5 15 35.5 18.8625C35.5 27.6125 27.4 32.775 23.775 34.0125Z" stroke="#F5F5F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                `;
+
+                // 좋아요 상태에 따라 하트 채우기
+                const heartPath = document.getElementById('heartPath');
+                heartFilled = isLiked; // 현재 하트 상태를 설정
+                if (heartFilled) {
+                    heartPath.setAttribute('fill', '#FF0000'); // 채워진 상태로 설정
+                } else {
+                    heartPath.setAttribute('fill', '#F5F5F5'); // 비워진 상태로 설정
+                }
+
+                // playlist 출력
+                playlist.forEach(item => {
+                    curatorInfoContainer.innerHTML += `
+                        <div class="playlist-item">
+                            <h3>${item.ptitle}</h3>
+                            <img class="playlist-img" src="${item.pimg}" alt="Playlist Image">
+                            <p>${item.pcmt}</p>
+                            <div class="playlist-tags">
+                                <strong>Tags:</strong> ${item.ptag.join(', ')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // SVG 클릭 이벤트 처리
+                const heartIcon = document.getElementById('heartIcon');
+                heartIcon.addEventListener('click', function() {
+                    const loggedIn = "{{ session['id'] }}";
+                    if (loggedIn) {
+                        toggleLike("{{ session['id'] }}", c_uuid);
+                    } else {
+                        alert('로그인이 필요합니다.');
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+
+    window.onload = function() {
+        let url = window.location.href.split('/')
+        let c_uuid = url[url.length - 1]
+        fetchCuratorData(c_uuid);
+    };
+
+    function toggleLike(u_uuid, c_uuid) {
+        const heartPath = document.getElementById('heartPath');
+        const method = heartFilled ? 'DELETE' : 'POST';
+        const url = heartFilled ? `/plyy/api/unlike/${encodeURIComponent(u_uuid)}/${encodeURIComponent(c_uuid)}` : `/plyy/api/like/${encodeURIComponent(u_uuid)}/${encodeURIComponent(c_uuid)}`;
+
+        fetch(url, { method: method })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    heartFilled = !heartFilled; // 하트 상태를 토글합니다.
+                    if (heartFilled) {
+                        heartPath.setAttribute('fill', '#FF0000'); // 채워진 상태로 변경
+                    } else {
+                        heartPath.setAttribute('fill', '#F5F5F5'); // 비워진 상태로 변경
+                    }
+                } else {
+                    console.error('Failed to toggle like:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling like:', error);
+            });
+    }
+</script>
+
+
+    
+</body>
+</html>
